@@ -6,17 +6,13 @@ Be sure to follow the Hacker Box setup instructions to get the board ready and l
 https://www.instructables.com/id/HackerBox-0057-Safe-Mode/
 
 ## BetterMario
-***
 This project contains a better example of Mario sounds that I ported to the badge. I felt like that Mario example that came from the HackerBox instructable didn't quite do it for me. See the project for references and credits. 
 
 ## GetMAC
-***
 A simple sketch that displays the ESP32's MAC address. Handy for pairing boards. See project for credits.
 
 ## Comms
-***
 This sketch demonstrates an example of wireless comms between two ESP32 boards using the ESP-NOW library. This is the main sketch that should be put on the HB0057 badge. There is LOTS to improve here, but it does work and maybe someone will find it helpful. ¯\_(ツ)_/¯
 
 ## Comms_Peer
-***
 This is a simple sketch that waits for a ping request and responds to the board running the Comms sketch. This can be run on a standalone ESP32 without a screen. 
