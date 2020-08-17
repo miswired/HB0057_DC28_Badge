@@ -1,9 +1,9 @@
 # HB0057_DC28_Badge
 This is contains some programs written to run on the Hacker Box #0057 DEFCON 28 badge based on the ESP32 board. Most of this should port easily to other ESP32 boards with an LCD screen.
 
-Be sure to follow the Hacker Box setup instructions to get the board ready and librarys installed first! 
+Be sure to setup the arduino enviroment first for ESP32 and the LCD library. I have written up a guide here
+[https://miswired.github.io/esp32/2020/08/16/HB0057DC28/](https://miswired.github.io/esp32/2020/08/16/HB0057DC28/)
 
-https://www.instructables.com/id/HackerBox-0057-Safe-Mode/
 
 ## BetterMario
 This project contains a better example of Mario sounds that I ported to the badge. I felt like that Mario example that came from the HackerBox instructable didn't quite do it for me. See the project for references and credits. 
