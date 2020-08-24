@@ -38,6 +38,7 @@
 #include <TFT_eSPI.h> 
 #include <esp_now.h>
 #include <WiFi.h>
+#include "logo.h"
 
 TFT_eSPI tft = TFT_eSPI(); 
 
@@ -60,16 +61,19 @@ uint8_t sendtoAddress[] = {0xFC, 0xF5, 0xC4, 0x0E, 0x3F, 0xC4};
 /* Definitions */
 /**************************************/
 
-#define TIMER_PING_DELAY_MS       5000     //Rate to ping boards
-#define TIMER_PEER_PING_TIMEOUT_MS    3000  //How long to wait for a ping response
+#define TIMER_PING_DELAY_MS           5000      //Rate to ping boards
+#define TIMER_PEER_PING_TIMEOUT_MS    3000      //How long to wait for a ping response
 
-#define TIMER_SCREEN_BOOT_MS      5000      //How long to show boot screen
-#define TIMER_SCREEN_REFRESH_RATE_MS  500   //How quickly to refresh LCD
+#define TIMER_SCREEN_BOOT_MS          5000      //How long to show boot screen
+#define TIMER_SCREEN_LOGO_MS          2000      //How long to show the logo on boot
+#define TIMER_SCREEN_REFRESH_RATE_MS  500       //How quickly to refresh LCD
 
 /* Screen state machine states */
 #define SCREEN_BOOTUP         0x00
 #define SCREEN_BOOT_TIMEOUT   0x01
 #define SCREEN_MAIN           0x02
+#define SCREEN_LOGO           0x03
+#define SCREEN_LOGO_TIMEOUT   0x04
 
 /* Badge hardware pinouts */
 #define PIN_BTN_A     21
