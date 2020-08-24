@@ -34,21 +34,7 @@ void setup_screen(void)
  */
 void service_screen(void)
 {
-  /* If we have new stats, and the timer is out
-   *  reset screen and print new stats. Here we are 
-   *  lazily using the timer to prevent clearing the
-   *  to quickly so you can see the packet status.
-   */
-  if((g_peer_a.statistics_recorded == STATE_SUCCESS) &&
-     (g_timer_ping_timeout_ms == 0))
-     {
-       g_peer_a.ping_sent=STATE_RESET;
-       g_peer_a.mac_found=STATE_RESET;
-       g_peer_a.response_received=STATE_RESET;
-       g_peer_a.statistics_recorded=STATE_RESET;
-       tft.fillScreen(TFT_BLACK);
-       screen_print_stats();
-     }
+  
 
      
   switch(g_screen_state)
@@ -68,13 +54,45 @@ void service_screen(void)
       if(g_timer_screen_ms == 0)
       {
         tft.fillScreen(TFT_BLACK);
+        g_screen_state = SCREEN_LOGO;
+      }
+    break;
+
+    case SCREEN_LOGO:
+      tft.pushImage(0, 0,  240, 135, logo);
+      g_timer_screen_ms = TIMER_SCREEN_LOGO_MS;
+      g_screen_state = SCREEN_LOGO_TIMEOUT;
+    break;
+
+    case SCREEN_LOGO_TIMEOUT:
+      if(g_timer_screen_ms == 0)
+      {
+        tft.fillScreen(TFT_BLACK);
         g_screen_state = SCREEN_MAIN;
       }
     break;
 
     case SCREEN_MAIN:
+      /* If we have new stats, and the timer is out
+       *  reset screen and print new stats. Here we are 
+       *  lazily using the timer to prevent clearing the
+       *  to quickly so you can see the packet status.
+       */
+      if((g_peer_a.statistics_recorded == STATE_SUCCESS) &&
+         (g_timer_ping_timeout_ms == 0))
+         {
+           g_peer_a.ping_sent=STATE_RESET;
+           g_peer_a.mac_found=STATE_RESET;
+           g_peer_a.response_received=STATE_RESET;
+           g_peer_a.statistics_recorded=STATE_RESET;
+           tft.fillScreen(TFT_BLACK);
+           screen_print_stats();
+         }
+
+
+    
       //tft.fillScreen(TFT_BLACK);
-      Serial.print("*");
+      //Serial.print("*");
       if(g_peer_a.ping_sent == STATE_SUCCESS)
       {
         tft.setCursor(0, 0, 4);
