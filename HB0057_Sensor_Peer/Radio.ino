@@ -29,10 +29,10 @@ void OnPacketReceved(const uint8_t * mac, const uint8_t *packetData, int packetL
   Serial.println(g_incomming_message.current_status);
 
   if((g_incomming_message.sender_id == 0x0000) &&
-     (g_incomming_message.command == COMM_CMD_PING))
+     (g_incomming_message.command == COMM_CMD_SLEEP))
   {
-    g_ping_received = PING_RECEIVED;
-    Serial.println("Ping Received!");
+    g_system_state = STATE_SLEEP;
+    Serial.println("Sleep Responce Received! Sleeping!");
   }
 }
 

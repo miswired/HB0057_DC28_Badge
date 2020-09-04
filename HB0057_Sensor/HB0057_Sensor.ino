@@ -54,9 +54,6 @@ TFT_eSPI tft = TFT_eSPI();
 /* This is the number of peers in the peers setup function */
 #define NUMBER_OF_PEERS   2
 
-/* This is the MAC address of the board you want to connect to */
-//uint8_t sendtoAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; 
-//uint8_t sendtoAddress[] = {0xFC, 0xF5, 0xC4, 0x0E, 0x3F, 0xC4}; 
 
 /*======================================================================*/
 
@@ -106,6 +103,8 @@ TFT_eSPI tft = TFT_eSPI();
 /*=============================*/
 #define COMM_CMD_PING      0x0001
 #define COMM_CMD_PING_ACK  0x0002
+#define COMM_CMD_SLEEP     0x0003
+#define COMM_CMD_BLINK     0x0004
 
 #define COMM_STATUS_GOOD   0x00AA
 #define COMM_STATUS_BAD    0x0055
@@ -118,15 +117,22 @@ TFT_eSPI tft = TFT_eSPI();
 #define STATE_FAILED      0xAA
 #define STATE_SUCCESS     0x55
 
+#define MAX_PING_TIMEOUT_MS 6000
+
+#define PEER_ACTIVE       0x01
+#define PEER_INACTIVE     0x02
+
 /* Global Variables
 /**************************************/
 
 /* Create struct to keep track of peers */
 typedef struct peer_t {
-  uint8_t   id;
-  uint8_t   current_status;
-  uint32_t  last_ping_time;
-  uint8_t   mac[6]; 
+  uint8_t   id;                 //ID of peer
+  uint8_t   current_state;      //Current state of peer
+  uint8_t   activity_status;    //Location to store peer's connection status
+  uint8_t   queued_command;     //Command to send when peer pings controller
+  uint32_t  last_ping_time;     //Timestamp of the last ping received
+  uint8_t   mac[6];             //MAC address of peer
 } peer_t;
 
 /* Array of peers to keep track of them */
@@ -173,6 +179,11 @@ void setup_screen(void);
 void screen_print_stats(void);
 void OnPacketSent(const uint8_t *mac, esp_now_send_status_t packetStatus);
 void OnPacketReceved(const uint8_t * mac, const uint8_t *packetData, int packetLength);
+void peers_setup(void);
+void peers_time_set(uint32_t ping_time, uint8_t id);
+void peers_serivce(void);
+void peers_command_set(uint8_t id, uint8_t command);
+uint8_t peers_command_get(uint8_t id);
 
 /* There seems to be a bug in the ESP Now library. Randomly it seems
  * you will get an invalid peer error when the following variable has 
@@ -200,6 +211,8 @@ void setup(void)
   pinMode(PIN_JOY_LEFT, INPUT_PULLUP);
   pinMode(PIN_JOY_PRESS, INPUT_PULLUP);
 
+  g_peers[0].queued_command = COMM_CMD_SLEEP;
+
   setup_screen();
 }
 
@@ -211,6 +224,7 @@ void loop()
 {
   service_timers();
   service_radio();
+  peers_serivce();
 
   /* If screen timer is up, refresh screen */
   if(g_timer_screen_refresh_ms == 0)

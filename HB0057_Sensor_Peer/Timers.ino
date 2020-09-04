@@ -28,13 +28,13 @@ void timers_service(void)
   /* Decrement system counters */
   /*===========================*/
   /* g_timer_ping_ms */
-  if(g_timer_ping_ms > delta)
+  if(g_timer_responce_timeout_ms > delta)
   {
-    g_timer_ping_ms = g_timer_ping_ms - delta;
+    g_timer_responce_timeout_ms = g_timer_responce_timeout_ms - delta;
   }
   else
   {
-    g_timer_ping_ms = 0;
+    g_timer_responce_timeout_ms = 0;
   }
 }
   

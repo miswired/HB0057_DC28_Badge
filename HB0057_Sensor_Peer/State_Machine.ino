@@ -22,13 +22,17 @@ void service_state(void)
     break;
 
     case STATE_DONE_SENDING:
-      //This is where I plan on setting delays to wait on response
+      //Set delay for a command response after the ping was sent
+      g_timer_responce_timeout_ms = RESPONSE_TIMEOUT_MS;
       g_system_state = STATE_WAIT_FOR_COMMAND;
     break;
 
     case STATE_WAIT_FOR_COMMAND:
-      //This is where I plan on waiting for a command
-      g_system_state = STATE_SLEEP;
+      //Wait for a timeout or the command response
+      if(g_timer_responce_timeout_ms == 0)
+      {
+        g_system_state = STATE_SLEEP;
+      }
     break;
 
     case STATE_SLEEP:

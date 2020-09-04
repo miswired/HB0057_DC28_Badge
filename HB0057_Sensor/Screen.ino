@@ -34,7 +34,7 @@ void setup_screen(void)
  */
 void service_screen(void)
 {
-  
+  uint8_t i=0;
 
      
   switch(g_screen_state)
@@ -73,6 +73,27 @@ void service_screen(void)
     break;
 
     case SCREEN_MAIN:
+
+    for(i=0; i<NUMBER_OF_PEERS; i++)
+    {
+      if(g_peers[i].activity_status == PEER_ACTIVE)
+      {
+        tft.setCursor(0, 25*i, 4);
+        tft.setTextColor(TFT_GREEN, TFT_BLACK);
+        tft.print("Peer ");
+        tft.print(i);
+        tft.print(" Peer Alive ");
+      }
+      else
+      {
+        tft.setCursor(0, 25*i, 4);
+        tft.setTextColor(TFT_RED, TFT_BLACK);
+        tft.print("Peer ");
+        tft.print(i);
+        tft.print(" Peer Dead  ");
+      }
+    }
+    
 /*
       //tft.fillScreen(TFT_BLACK);
       //Serial.print("*");

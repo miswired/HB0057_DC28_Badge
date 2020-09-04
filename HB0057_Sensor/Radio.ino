@@ -105,6 +105,9 @@ void OnPacketSent(const uint8_t *mac, esp_now_send_status_t packetStatus)
  */
 void OnPacketReceved(const uint8_t * mac, const uint8_t *packetData, int packetLength)
 {
+  uint8_t mac_octet=0;
+  uint8_t sendtoAddress[6];
+  
   //Notice we are copying based on the size of storrage data type, NOT the sending packet
   memcpy(&g_incomming_message, packetData, sizeof(g_incomming_message));
 
@@ -117,5 +120,33 @@ void OnPacketReceved(const uint8_t * mac, const uint8_t *packetData, int packetL
   Serial.println(g_incomming_message.command);
   Serial.print("current_status=");
   Serial.println(g_incomming_message.current_status);
+
+  /* IMPORTANT */
+  /*  Check to make sure the peer is found before trying to modify
+   *  data of a peer ID that doesn't exist.
+   */
+  if(peer_id_found(g_incomming_message.sender_id))
+  {
+    /*Update the latest ping time of for the peer */
+    peers_time_set(millis(), g_incomming_message.sender_id);
   
+    g_outgoing_message.sender_id = BOARD_ID_NUMBER;
+    g_outgoing_message.command = peers_command_get(g_incomming_message.sender_id);
+    g_outgoing_message.current_status = COMM_STATUS_GOOD;
+
+    for(mac_octet = 0; mac_octet <6; mac_octet++)
+    {
+      sendtoAddress[mac_octet] = g_peers[peer_id_to_index(g_incomming_message.sender_id)].mac[mac_octet];
+    }
+  
+    //Send message
+    esp_err_t send_result = esp_now_send(sendtoAddress, (uint8_t *) &g_outgoing_message, sizeof(g_outgoing_message));
+  
+    if (send_result == ESP_OK) {
+      Serial.println("Queued Command Sent");
+    }
+    else {
+      Serial.println("Queued Command Send Failed");
+    }
+  }
 }

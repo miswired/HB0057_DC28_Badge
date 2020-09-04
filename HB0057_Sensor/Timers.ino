@@ -6,7 +6,7 @@
  */
 void service_timers(void)
 {
-  unsigned long delta = 0;
+  uint32_t delta = 0;
   /* Update time */
   g_timer_clock_current = millis();
 

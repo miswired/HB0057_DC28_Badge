@@ -40,7 +40,7 @@
 
 /* This is this boards ID */
 /* Each board should have a unique ID */
-#define BOARD_ID_NUMBER   0x0000
+#define BOARD_ID_NUMBER   0x0001
 
 /* This is the MAC address of the board you want to connect to */
 // When you are done, you can remove the error line below
@@ -60,6 +60,8 @@ uint8_t sendtoAddress[] = {0x24, 0x62, 0xAB, 0xF1, 0x9E, 0x58};
 /*These are common definitions for the communication protocol*/
 #define COMM_CMD_PING      0x0001
 #define COMM_CMD_PING_ACK  0x0002
+#define COMM_CMD_SLEEP     0x0003
+#define COMM_CMD_BLINK     0x0004
 
 #define COMM_STATUS_GOOD   0x00AA
 #define COMM_STATUS_BAD    0x0055
@@ -83,6 +85,8 @@ uint8_t g_ping_received=PING_NOT_RECEIVED;
 #define PACKET_DONE 0x01
 #define PACKET_BUSY 0x02
 
+#define RESPONSE_TIMEOUT_MS   500
+
 volatile uint8_t g_packet_sending = PACKET_DONE;
 
 /* There seems to be a bug in the ESP Now library. Randomly it seems
@@ -97,7 +101,7 @@ esp_now_peer_info_t peerInfo;
  */
 volatile unsigned long g_timer_clock_current = 0;    //used for tracking time
 volatile unsigned long g_timer_clock_previous = 0;
-volatile unsigned long g_timer_ping_ms = 0;
+volatile unsigned long g_timer_responce_timeout_ms = 0;
 
 
 #define STATE_BOOTUP            0x00
